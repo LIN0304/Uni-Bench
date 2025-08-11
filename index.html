@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Model Benchmarks • Design Arena</title>
+    <meta name="description" content="Interactive benchmarks with sortable, filterable charts." />
+    <link rel="icon" href="assets/favicon.svg" />
+    <link rel="stylesheet" href="assets/styles.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="brand">
+        <img src="assets/favicon.svg" alt="logo" class="logo" />
+        <div>
+          <h1>Benchmark Arena</h1>
+          <p class="subtitle">Interactive rankings across tasks</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="themeToggle" class="btn btn-ghost" title="Toggle theme">🌗</button>
+        <a class="btn btn-primary" id="downloadBtn" download>Download SVG</a>
+      </div>
+    </header>
+
+    <main>
+      <nav id="tabs" class="tabs" role="tablist" aria-label="Benchmark categories">
+        <!-- tabs injected by app.js -->
+      </nav>
+
+      <section id="controls" class="controls" aria-label="Chart controls">
+        <div class="row">
+          <div class="control">
+            <label for="search">Search</label>
+            <input id="search" type="search" placeholder="Filter models…" />
+          </div>
+          <div class="control">
+            <label for="familyFilter">Family</label>
+            <select id="familyFilter">
+              <option value="all">All</option>
+            </select>
+          </div>
+          <div class="control">
+            <label for="sortBy">Sort</label>
+            <select id="sortBy">
+              <option value="value-desc">Score ▾</option>
+              <option value="value-asc">Score ▴</option>
+              <option value="name-asc">Name A→Z</option>
+              <option value="name-desc">Name Z→A</option>
+            </select>
+          </div>
+          <div class="control">
+            <label class="checkbox">
+              <input id="normalize" type="checkbox" />
+              <span>Normalize bars</span>
+            </label>
+          </div>
+        </div>
+        <div class="row meta">
+          <span id="datasetMeta"></span>
+          <span id="selectionMeta"></span>
+        </div>
+      </section>
+
+      <section id="chart" class="chart" aria-live="polite">
+        <!-- SVG chart injected -->
+      </section>
+
+      <section id="legend" class="legend" aria-label="Model family legend">
+        <!-- legend items injected -->
+      </section>
+
+      <section id="table" class="table-wrap">
+        <!-- table view injected -->
+      </section>
+
+      <section id="externalWrap" class="external" hidden>
+        <iframe id="externalFrame" title="AI IQ Chart" loading="lazy"></iframe>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <span>Built locally. No external libs.</span>
+      <span id="deepLink"></span>
+    </footer>
+
+    <script src="assets/data.js"></script>
+    <script src="assets/app.js"></script>
+  </body>
+  </html>
