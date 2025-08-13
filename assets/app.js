@@ -323,7 +323,10 @@
       legendEl.hidden = true;
       externalWrap.hidden = false;
       if (externalFrame.src !== EXTERNAL_TAB.url) externalFrame.src = EXTERNAL_TAB.url;
-      datasetMeta.innerHTML = `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span>`;
+      const extSrc = EXTERNAL_TAB.source && typeof EXTERNAL_TAB.source === 'string' && EXTERNAL_TAB.source.trim() ? EXTERNAL_TAB.source.trim() : '';
+      datasetMeta.innerHTML = extSrc
+        ? `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span> • <a href="${extSrc}" target="_blank" rel="noopener">Source</a>`
+        : `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span>`;
       selectionMeta.textContent = `Embedded page`;
       encodeHash();
       return;
