@@ -1,11 +1,14 @@
 // Benchmark datasets. Self-contained to avoid fetch/CORS issues.
 // Each dataset: { id, title, unit: 'percent' | 'score', entries: [{ name, value, up?:number, down?:number, notes?:string }] }
 
+// Added optional `source` (string URL) for each dataset.
+// Fill each with the original benchmark link you want to display in the UI.
 window.BENCHMARK_DATA = [
   {
     id: 'design-arena-web',
     title: 'Design Arena (Web)',
     unit: 'percent',
+    source: '', // e.g. 'https://example.com/design-arena-source'
     entries: [
       { name: 'Humanity', value: 100.0 },
       { name: 'GPT-5', value: 79.2 },
@@ -33,6 +36,7 @@ window.BENCHMARK_DATA = [
     id: 'artificial-analysis',
     title: 'Artificial Analysis Rankings',
     unit: 'score',
+    source: '', // e.g. 'https://example.com/artificial-analysis-source'
     entries: [
       { name: 'GPT-5 (high)', value: 69 },
       { name: 'GPT-5 (medium)', value: 68 },
@@ -60,6 +64,7 @@ window.BENCHMARK_DATA = [
     id: 'creative-writing',
     title: 'Creative Writing Benchmark',
     unit: 'score',
+    source: '', // e.g. 'https://example.com/creative-writing-source'
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 8.60 },
       { name: 'Kimi K2', value: 8.56, down: 1 },
@@ -87,6 +92,7 @@ window.BENCHMARK_DATA = [
     id: 'simplebench',
     title: 'SimpleBench Rankings',
     unit: 'percent',
+    source: '', // e.g. 'https://example.com/simplebench-source'
     entries: [
       { name: 'Human Baseline*', value: 83.7 },
       { name: 'Gemini 2.5 Pro (06-05)', value: 62.4 },
@@ -114,6 +120,7 @@ window.BENCHMARK_DATA = [
     id: 'confabulations',
     title: 'Confabulations Benchmark',
     unit: 'score',
+    source: '', // e.g. 'https://example.com/confabulations-source'
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 10.34 },
       { name: 'Gemini 2.5 Pro Preview 05-06', value: 10.62, up: 1 },
@@ -141,6 +148,7 @@ window.BENCHMARK_DATA = [
     id: 'eq-bench',
     title: 'EQ-Bench Rankings',
     unit: 'score',
+    source: '', // e.g. 'https://example.com/eq-bench-source'
     entries: [
       { name: 'openrouter/horizon-alpha', value: 1568.1 },
       { name: 'moonshotai/Kimi-K2-Instruct', value: 1565.3 },
