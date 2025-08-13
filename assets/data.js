@@ -3,11 +3,13 @@
 
 // Added optional `source` (string URL) for each dataset.
 // Fill each with the original benchmark link you want to display in the UI.
+// Added optional `source` (string URL) for each dataset.
 window.BENCHMARK_DATA = [
   {
     id: 'design-arena-web',
     title: 'Design Arena (Web)',
     unit: 'percent',
+    source: 'https://www.designarena.ai/',
     source: '', // e.g. 'https://example.com/design-arena-source'
     entries: [
       { name: 'Humanity', value: 100.0 },
@@ -36,6 +38,7 @@ window.BENCHMARK_DATA = [
     id: 'artificial-analysis',
     title: 'Artificial Analysis Rankings',
     unit: 'score',
+    source: 'https://www.designarena.ai/',
     source: '', // e.g. 'https://example.com/artificial-analysis-source'
     entries: [
       { name: 'GPT-5 (high)', value: 69 },
@@ -64,6 +67,7 @@ window.BENCHMARK_DATA = [
     id: 'creative-writing',
     title: 'Creative Writing Benchmark',
     unit: 'score',
+    source: '',
     source: '', // e.g. 'https://example.com/creative-writing-source'
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 8.60 },
@@ -92,6 +96,7 @@ window.BENCHMARK_DATA = [
     id: 'simplebench',
     title: 'SimpleBench Rankings',
     unit: 'percent',
+    source: 'https://simple-bench.com/index.html',
     source: '', // e.g. 'https://example.com/simplebench-source'
     entries: [
       { name: 'Human Baseline*', value: 83.7 },
@@ -120,6 +125,7 @@ window.BENCHMARK_DATA = [
     id: 'confabulations',
     title: 'Confabulations Benchmark',
     unit: 'score',
+    source: '',
     source: '', // e.g. 'https://example.com/confabulations-source'
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 10.34 },
@@ -148,6 +154,7 @@ window.BENCHMARK_DATA = [
     id: 'eq-bench',
     title: 'EQ-Bench Rankings',
     unit: 'score',
+    source: 'https://eqbench.com/',
     source: '', // e.g. 'https://example.com/eq-bench-source'
     entries: [
       { name: 'openrouter/horizon-alpha', value: 1568.1 },
