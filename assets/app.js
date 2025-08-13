@@ -10,13 +10,12 @@
     'DeepSeek': 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/deepseek-logo-icon.svg',
     // Use xAI logo for Grok/XAI family
     'Grok': 'https://www.linqto.com/wp-content/themes/linqto2.0/imgs/companies/round/xAI%20round%20%23000000.svg',
-    'Meta': '/assets/icons/meta.svg',
-    'Microsoft': '/assets/icons/microsoft.svg',
+    'Meta': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/6bbb8e56-b079-58d9-a659-6ce828e8d213/8e7c058c-0cd3-5408-9436-97a6c46ee711.jpg',
+    'Microsoft': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/8e0e6171-8e53-5bad-acab-cb95632396c2/dfb8d196-14ec-5e1b-bc6b-d52a6485df78.jpg',
     'GLM': '/assets/icons/glm.svg',
     'Qwen': '/assets/icons/qwen.svg',
     'Mistral': 'https://app.aicontentlabs.com/v2/providers/square-icons/Mistral.png',
-    'Human': '/assets/icons/human.svg',
-    'Other': '/assets/icons/other.svg'
+    'Human': '/assets/icons/human.svg'
   };
 
   // Elements
@@ -45,7 +44,7 @@
     label: 'AI IQ Chart',
     // Use root-relative paths to avoid Vercel "not_found" errors
     url: '/assets/ai_iq_chart.html',
-    icon: '/assets/icons/other.svg',
+    icon: '/assets/favicon.svg',
     source: 'https://www.trackingai.org/home'
   };
   let filters = {
