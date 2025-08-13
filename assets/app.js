@@ -10,13 +10,13 @@
     'DeepSeek': 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/deepseek-logo-icon.svg',
     // Use xAI logo for Grok/XAI family
     'Grok': 'https://www.linqto.com/wp-content/themes/linqto2.0/imgs/companies/round/xAI%20round%20%23000000.svg',
-    'Meta': 'assets/icons/meta.svg',
-    'Microsoft': 'assets/icons/microsoft.svg',
-    'GLM': 'assets/icons/glm.svg',
-    'Qwen': 'assets/icons/qwen.svg',
+    'Meta': '/assets/icons/meta.svg',
+    'Microsoft': '/assets/icons/microsoft.svg',
+    'GLM': '/assets/icons/glm.svg',
+    'Qwen': '/assets/icons/qwen.svg',
     'Mistral': 'https://app.aicontentlabs.com/v2/providers/square-icons/Mistral.png',
-    'Human': 'assets/icons/human.svg',
-    'Other': 'assets/icons/other.svg'
+    'Human': '/assets/icons/human.svg',
+    'Other': '/assets/icons/other.svg'
   };
 
   // Elements
@@ -40,7 +40,14 @@
   // State
   let activeId = datasets[0]?.id;
   let activeExternal = false;
-  const EXTERNAL_TAB = { id: 'external', label: 'AI IQ Chart', url: 'assets/ai_iq_chart.html', icon: 'assets/icons/other.svg', source: 'https://www.trackingai.org/home' };
+  const EXTERNAL_TAB = {
+    id: 'external',
+    label: 'AI IQ Chart',
+    // Use root-relative paths to avoid Vercel "not_found" errors
+    url: '/assets/ai_iq_chart.html',
+    icon: '/assets/icons/other.svg',
+    source: 'https://www.trackingai.org/home'
+  };
   let filters = {
     q: '',
     family: 'all',
