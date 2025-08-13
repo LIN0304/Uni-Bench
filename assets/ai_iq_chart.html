@@ -226,18 +226,18 @@
       }
 
       function buildLegend(){
-        // Root-relative paths so this works from /assets/ path on Vercel
+        // Use external URLs when provided, otherwise root-relative paths so this works from /assets/ path on Vercel
         const ICONS = {
-          OpenAI: '/assets/icons/openai.svg',
-          Anthropic: '/assets/icons/anthropic.svg',
-          Google: '/assets/icons/google.svg',
-          DeepSeek: '/assets/icons/deepseek.svg',
+          OpenAI: 'https://assets.streamlinehq.com/image/private/w_240,h_240,ar_1/f_auto/v1/icons/technology/openai_1-moa3pqsiii7l4dkheifi8.png/openai_1-gv7rd0u7lcncyfalyjodt.png?_a=DATAg1AAZAA0',
+          Anthropic: 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/c71c2417-1136-5b8f-8384-5be351ff5489/14905bc2-10d7-526a-8286-e84ca4465d93.jpg',
+          Google: 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/0bc68474-83b9-5d25-8c12-0a3fbd0c056c/d2af60bc-b839-50ac-a580-94b1f1850676.jpg',
+          DeepSeek: 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/deepseek-logo-icon.svg',
           Meta: '/assets/icons/meta.svg',
           Microsoft: '/assets/icons/microsoft.svg',
           Qwen: '/assets/icons/qwen.svg',
-          Grok: '/assets/icons/grok.svg',
+          Grok: 'https://www.linqto.com/wp-content/themes/linqto2.0/imgs/companies/round/xAI%20round%20%23000000.svg',
           GLM: '/assets/icons/glm.svg',
-          Mistral: '/assets/icons/mistral.svg',
+          Mistral: 'https://app.aicontentlabs.com/v2/providers/square-icons/Mistral.png',
           Human: '/assets/icons/human.svg',
           Other: '/assets/icons/other.svg'
         };
