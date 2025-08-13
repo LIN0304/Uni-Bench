@@ -1,0 +1,284 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI IQ Chart</title>
+    <style>
+      :root{
+        --bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;--grid:#1d2732;--primary:#6aa5ff;--accent:#7ef0cb; color-scheme: dark only;
+      }
+      [data-theme="light"]{ --bg:#f7f9fc; --surface:#ffffff; --text:#0b0e12; --muted:#475569; --grid:#eef2f7; --primary:#155eef; --accent:#0891b2; color-scheme: light only; }
+      body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+      main{max-width:1100px;margin:24px auto;padding:0 16px}
+      .wrap{background:var(--surface);border:1px solid var(--grid);border-radius:12px;padding:12px}
+      h1{font-size:18px;margin:0 0 12px 0}
+      svg{display:block;width:100%;height:auto}
+      .grid{stroke:var(--grid);stroke-width:1}
+      .tick{fill:var(--muted);font-size:11px}
+      .seriesA{fill:#222}
+      .seriesB{fill:#f6b400}
+      .seriesAline{stroke:#111;stroke-width:6;stroke-linecap:round}
+      .seriesBline{stroke:#f6b400;stroke-width:6;stroke-linecap:round}
+      .value{fill:var(--text);font-size:12px}
+      .label{fill:var(--text);font-size:12px}
+      .curve-area{fill:var(--primary);opacity:.5}
+      .curve-axis text{fill:var(--muted);font-size:11px}
+      .dot{stroke:#000;stroke-width:.5}
+      .legend-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;margin:12px 0 0 0;color:var(--muted);font-size:12px}
+      .legend-item{display:flex;align-items:center;gap:8px;padding:6px 8px;border:1px solid var(--grid);border-radius:8px;background:var(--surface)}
+      .legend-item img{width:16px;height:16px;border-radius:4px}
+      .row{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin:8px 0}
+      select{padding:8px 10px;background:transparent;border:1px solid var(--grid);border-radius:8px;color:var(--text)}
+      .tooltip{position:fixed;pointer-events:none;background:var(--surface);border:1px solid var(--grid);padding:10px 12px;border-radius:10px;opacity:0;transition:opacity .12s ease-out;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+      .tooltip .ttl{font-weight:600;margin-bottom:6px}
+      .tooltip .muted{color:var(--muted)}
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="wrap">
+        <h1 style="margin:0 0 8px 0">AI IQ Comparison</h1>
+        <svg id="curve" xmlns="http://www.w3.org/2000/svg"></svg>
+        <div id="legend" class="legend-grid"></div>
+        <svg id="bars" xmlns="http://www.w3.org/2000/svg" style="margin-top:10px"></svg>
+      </div>
+    </main>
+    <div id="tip" class="tooltip"></div>
+    <script>
+      const data = [
+        { name: 'OpenAI GPT 5 Pro (Vision)', a:123, b:136 },
+        { name: 'Gemini 2.5 Pro', a:118, b:137 },
+        { name: 'Claude-4 Opus', a:117, b:0 },
+        { name: 'OpenAI GPT 5 Pro', a:116, b:148 },
+        { name: 'OpenAI o3', a:116, b:135 },
+        { name: 'OpenAI o3 Pro', a:109, b:133 },
+        { name: 'Claude-4 Sonnet', a:107, b:119 },
+        { name: 'OpenAI o3 Pro (Vision)', a:104, b:0 },
+        { name: 'Grok-4', a:100, b:121 },
+        { name: 'Gemini 2.5 Pro (Vision)', a:99, b:0 },
+        { name: 'OpenAI o3 (Vision)', a:97, b:0 },
+        { name: 'OpenAI GPT 5', a:94, b:115 },
+        { name: 'OpenAI o4 mini', a:90, b:112 },
+        { name: 'Claude-4 Sonnet (Vision)', a:88, b:0 },
+        { name: 'Gemini 2.5 Flash Thinking.', a:87, b:93 },
+        { name: 'OpenAI GPT 5 (Vision)', a:67, b:87 },
+        { name: 'OpenAI o4 mini high', a:87, b:99 },
+        { name: 'DeepSeek R1', a:86, b:101 },
+        { name: 'OpenAI o4 mini (Vision)', a:79, b:84 },
+        { name: 'Llama 4 Maverick', a:82, b:100 },
+        { name: 'Claude-4 Opus (Vision)', a:82, b:0 },
+        { name: 'DeepSeek V3', a:79, b:92 },
+        { name: 'Llama 4 Maverick (Vision)', a:62, b:75 },
+        { name: 'Mistral', a:74, b:85 },
+        { name: 'GPT-4o', a:69, b:85 },
+        { name: 'Grok-4 (Vision)', a:68, b:82 },
+        { name: 'Bing Copilot', a:67, b:86 },
+        { name: 'GPT-4o (Vision)', a:64, b:65 },
+        { name: 'OpenAI GPT 5 Thinking', a:64, b:79 }
+      ];
+      const curveSvg = document.getElementById('curve');
+      const barsSvg = document.getElementById('bars');
+      const legendEl = document.getElementById('legend');
+      const tip = document.getElementById('tip');
+
+      function approxTextWidth(text, fontSize=12, ratio=0.6){ return Math.ceil(text.length * fontSize * ratio); }
+      function showTip(html, x, y){ tip.innerHTML = html; const r = tip.getBoundingClientRect(); tip.style.left = (x+12)+ 'px'; tip.style.top = (y - r.height/2) + 'px'; tip.style.opacity = '1'; }
+      function hideTip(){ tip.style.opacity = '0'; }
+
+      function renderBars(){
+        const width = 1060, barH = 18, gap = 10, leftPad = 270, rightPad = 40;
+        const height = data.length * (barH + gap) + 40;
+        barsSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        barsSvg.innerHTML = '';
+        const maxVal = Math.max(160, ...data.map(d => Math.max(d.a, d.b)));
+        const x = v => leftPad + (v / maxVal) * (width - leftPad - rightPad);
+        const grid = document.createElementNS('http://www.w3.org/2000/svg','g');
+        for (let i = 40; i <= 160; i += 20) {
+          const gx = x(i);
+          const line = document.createElementNS('http://www.w3.org/2000/svg','line');
+          line.setAttribute('x1', gx); line.setAttribute('y1', 10);
+          line.setAttribute('x2', gx); line.setAttribute('y2', height);
+          line.setAttribute('class', 'grid');
+          grid.appendChild(line);
+          const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+          t.setAttribute('x', gx); t.setAttribute('y', 22); t.setAttribute('class','tick');
+          t.setAttribute('text-anchor','middle');
+          t.textContent = i.toFixed(0);
+          grid.appendChild(t);
+        }
+        barsSvg.appendChild(grid);
+        data.forEach((d, i) => {
+          const y = 30 + i * (barH + gap);
+          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+          const label = document.createElementNS('http://www.w3.org/2000/svg','text');
+          label.setAttribute('x', leftPad - 10);
+          label.setAttribute('y', y + barH - 2);
+          label.setAttribute('class','label');
+          label.setAttribute('text-anchor','end');
+          label.textContent = d.name;
+          g.appendChild(label);
+          const yA = y + (barH/2 - 6);
+          const yB = y + (barH/2 + 6);
+          if (d.a > 0) {
+            const xA = x(d.a);
+            const lineA = document.createElementNS('http://www.w3.org/2000/svg','line');
+            lineA.setAttribute('x1', leftPad); lineA.setAttribute('x2', xA); lineA.setAttribute('y1', yA); lineA.setAttribute('y2', yA); lineA.setAttribute('class','seriesAline');
+            g.appendChild(lineA);
+            const dotA = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            dotA.setAttribute('cx', xA); dotA.setAttribute('cy', yA); dotA.setAttribute('r', 6); dotA.setAttribute('fill', '#111');
+            g.appendChild(dotA);
+            const aStr = String(d.a);
+            const aW = approxTextWidth(aStr, 12);
+            const aX = Math.min(xA + 8, width - rightPad - aW);
+            const aVal = document.createElementNS('http://www.w3.org/2000/svg','text');
+            aVal.setAttribute('x', aX);
+            aVal.setAttribute('y', yA + 4);
+            aVal.setAttribute('class','value');
+            aVal.setAttribute('text-anchor','start');
+            aVal.textContent = aStr;
+            g.appendChild(aVal);
+          }
+          if (d.b > 0) {
+            const xB = x(d.b);
+            const lineB = document.createElementNS('http://www.w3.org/2000/svg','line');
+            lineB.setAttribute('x1', leftPad); lineB.setAttribute('x2', xB); lineB.setAttribute('y1', yB); lineB.setAttribute('y2', yB); lineB.setAttribute('class','seriesBline');
+            g.appendChild(lineB);
+            const dotB = document.createElementNS('http://www.w3.org/2000/svg','circle');
+            dotB.setAttribute('cx', xB); dotB.setAttribute('cy', yB); dotB.setAttribute('r', 6); dotB.setAttribute('fill', '#f6b400');
+            g.appendChild(dotB);
+            const bStr = String(d.b);
+            const bW = approxTextWidth(bStr, 12);
+            const bX = Math.min(xB + 8, width - rightPad - bW);
+            const bVal = document.createElementNS('http://www.w3.org/2000/svg','text');
+            bVal.setAttribute('x', bX);
+            bVal.setAttribute('y', yB + 4);
+            bVal.setAttribute('class','value');
+            bVal.setAttribute('text-anchor','start');
+            bVal.textContent = bStr;
+            g.appendChild(bVal);
+          }
+          barsSvg.appendChild(g);
+        });
+      }
+
+      function renderCurve(){
+        const width = 1060, height = 380, leftPad = 50, rightPad = 20, bottomPad = 48, topPad = 20;
+        curveSvg.setAttribute('viewBox', `0 0 ${width} ${height}`);
+        curveSvg.innerHTML = '';
+        const minIQ = 50, maxIQ = 150; const mu = 100, sigma = 15;
+        const x = (iq) => leftPad + ((iq - minIQ) / (maxIQ - minIQ)) * (width - leftPad - rightPad);
+        const yFromNorm = (p) => topPad + (1 - p) * (height - topPad - bottomPad);
+        const normal = x => Math.exp(-0.5 * Math.pow((x - mu)/sigma, 2));
+        // area path
+        let d = `M ${leftPad} ${yFromNorm(0)}`;
+        const steps = 400;
+        let maxN = 0;
+        for (let i=0;i<=steps;i++){ const iq = minIQ + (i/steps)*(maxIQ-minIQ); maxN = Math.max(maxN, normal(iq)); }
+        for (let i=0;i<=steps;i++){
+          const iq = minIQ + (i/steps)*(maxIQ-minIQ);
+          const p = normal(iq) / maxN; // 0..1 normalized
+          d += ` L ${x(iq)} ${yFromNorm(p)}`;
+        }
+        d += ` L ${x(maxIQ)} ${yFromNorm(0)} Z`;
+        const area = document.createElementNS('http://www.w3.org/2000/svg','path');
+        area.setAttribute('d', d);
+        area.setAttribute('class','curve-area');
+        curveSvg.appendChild(area);
+        // axis
+        const axis = document.createElementNS('http://www.w3.org/2000/svg','g');
+        axis.setAttribute('class','curve-axis');
+        const baseY = yFromNorm(0);
+        const axisLine = document.createElementNS('http://www.w3.org/2000/svg','line');
+        axisLine.setAttribute('x1', leftPad); axisLine.setAttribute('y1', baseY);
+        axisLine.setAttribute('x2', width-rightPad); axisLine.setAttribute('y2', baseY); axisLine.setAttribute('stroke', 'var(--grid)');
+        curveSvg.appendChild(axisLine);
+        for(let iq = 50; iq<=150; iq+=10){
+          const tx = x(iq);
+          const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+          t.setAttribute('x', tx);
+          t.setAttribute('y', baseY + 16);
+          t.setAttribute('text-anchor','middle');
+          t.textContent = String(iq);
+          t.setAttribute('class','tick');
+          axis.appendChild(t);
+        }
+        curveSvg.appendChild(axis);
+        // points
+        const valForPoint = d => (d.b || d.a);
+        data.forEach((row) => {
+          const iq = Math.max(minIQ, Math.min(maxIQ, valForPoint(row)));
+          const p = normal(iq) / maxN;
+          const cx = x(iq), cy = yFromNorm(p);
+          // marker chip (circle + text)
+          const g = document.createElementNS('http://www.w3.org/2000/svg','g');
+          const dot = document.createElementNS('http://www.w3.org/2000/svg','circle');
+          dot.setAttribute('cx', cx); dot.setAttribute('cy', cy); dot.setAttribute('r', 8); dot.setAttribute('class','dot'); dot.setAttribute('fill', 'var(--accent)');
+          const tx2 = document.createElementNS('http://www.w3.org/2000/svg','text');
+          tx2.setAttribute('x', cx); tx2.setAttribute('y', cy+4); tx2.setAttribute('text-anchor','middle'); tx2.setAttribute('font-size','10'); tx2.textContent = Math.round(iq);
+          g.appendChild(dot); g.appendChild(tx2);
+          g.addEventListener('mouseenter', (ev)=>{
+            showTip(`<div class='ttl'>${row.name}</div><div class='muted'>IQ ${valForPoint(row)}</div>`, ev.clientX, ev.clientY);
+          });
+          g.addEventListener('mouseleave', hideTip);
+          curveSvg.appendChild(g);
+        });
+      }
+
+      function buildLegend(){
+        // Root-relative paths so this works from /assets/ path on Vercel
+        const ICONS = {
+          OpenAI: '/assets/icons/openai.svg',
+          Anthropic: '/assets/icons/anthropic.svg',
+          Google: '/assets/icons/google.svg',
+          DeepSeek: '/assets/icons/deepseek.svg',
+          Meta: '/assets/icons/meta.svg',
+          Microsoft: '/assets/icons/microsoft.svg',
+          Qwen: '/assets/icons/qwen.svg',
+          Grok: '/assets/icons/grok.svg',
+          GLM: '/assets/icons/glm.svg',
+          Mistral: '/assets/icons/mistral.svg',
+          Human: '/assets/icons/human.svg',
+          Other: '/assets/icons/other.svg'
+        };
+        const families = [
+          { key: 'OpenAI', match: /(gpt|o1|o3|o4|openai)/i },
+          { key: 'Anthropic', match: /(claude)/i },
+          { key: 'Google', match: /(gemini)/i },
+          { key: 'DeepSeek', match: /(deepseek)/i },
+          { key: 'Meta', match: /(llama|meta)/i },
+          { key: 'Microsoft', match: /(bing|copilot|microsoft)/i },
+          { key: 'Qwen', match: /(qwen)/i },
+          { key: 'Grok', match: /(grok)/i },
+          { key: 'GLM', match: /(glm)/i },
+          { key: 'Mistral', match: /(mistral)/i },
+          { key: 'Human', match: /(human)/i },
+          { key: 'Other', match: /.*/ }
+        ];
+        const detectFamily = (name) => {
+          for (const f of families) if (f.match.test(name)) return f.key;
+          return 'Other';
+        };
+        legendEl.innerHTML = '';
+        data.forEach(d => {
+          const fam = detectFamily(d.name);
+          const icon = ICONS[fam] || ICONS.Other;
+          const item = document.createElement('div');
+          item.className = 'legend-item';
+          item.innerHTML = `<img src="${icon}" alt="${fam}"/><span>${d.name}</span>`;
+          legendEl.appendChild(item);
+        });
+      }
+
+      // Sync theme with host site
+      (function syncTheme(){
+        const saved = localStorage.getItem('theme');
+        if (saved) document.documentElement.dataset.theme = saved;
+      })();
+      renderCurve();
+      buildLegend();
+      renderBars();
+    </script>
+  </body>
+  </html>
+
