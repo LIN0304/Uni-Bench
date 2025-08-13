@@ -3,17 +3,18 @@
   const datasets = window.BENCHMARK_DATA || [];
   const families = window.BENCHMARK_FAMILIES || [];
   const ICONS = {
-    // Brand icons swapped to provided URLs
-    'OpenAI': 'https://pbs.twimg.com/profile_images/1885410181409820672/ztsaR0JW_400x400.jpg',
+    // Updated per user-provided sources
+    'OpenAI': 'https://assets.streamlinehq.com/image/private/w_240,h_240,ar_1/f_auto/v1/icons/technology/openai_1-moa3pqsiii7l4dkheifi8.png/openai_1-gv7rd0u7lcncyfalyjodt.png?_a=DATAg1AAZAA0',
     'Anthropic': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/c71c2417-1136-5b8f-8384-5be351ff5489/14905bc2-10d7-526a-8286-e84ca4465d93.jpg',
-    'Google': 'https://image.similarpng.com/file/similarpng/original-picture/2020/06/Logo-google-icon-PNG.png',
-    'DeepSeek': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/f4e1e123-607e-53cc-8d85-2d7ea331f388/138fdcce-1fd7-5548-a415-c6ec311ed754.jpg',
-    'Grok': 'https://upload.wikimedia.org/wikipedia/commons/9/93/XAI_Logo.svg',
-    'Meta': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/a19d89bb-6028-5c0a-9260-d36706ab9c1b/a4644549-5dcd-52fe-8cdf-2733b3e03417.jpg',
+    'Google': 'https://d2u1z1lopyfwlx.cloudfront.net/thumbnails/0bc68474-83b9-5d25-8c12-0a3fbd0c056c/d2af60bc-b839-50ac-a580-94b1f1850676.jpg',
+    'DeepSeek': 'https://uxwing.com/wp-content/themes/uxwing/download/brands-and-social-media/deepseek-logo-icon.svg',
+    // Use xAI logo for Grok/XAI family
+    'Grok': 'https://www.linqto.com/wp-content/themes/linqto2.0/imgs/companies/round/xAI%20round%20%23000000.svg',
+    'Meta': 'assets/icons/meta.svg',
     'Microsoft': 'assets/icons/microsoft.svg',
     'GLM': 'assets/icons/glm.svg',
     'Qwen': 'assets/icons/qwen.svg',
-    'Mistral': 'assets/icons/mistral.svg',
+    'Mistral': 'https://app.aicontentlabs.com/v2/providers/square-icons/Mistral.png',
     'Human': 'assets/icons/human.svg',
     'Other': 'assets/icons/other.svg'
   };
@@ -39,7 +40,7 @@
   // State
   let activeId = datasets[0]?.id;
   let activeExternal = false;
-  const EXTERNAL_TAB = { id: 'external', label: 'AI IQ Chart', url: 'file:///Users/raylin/Desktop/Uni_bench/ai_iq_chart.html', icon: 'assets/icons/other.svg' };
+  const EXTERNAL_TAB = { id: 'external', label: 'AI IQ Chart', url: 'assets/ai_iq_chart.html', icon: 'assets/icons/other.svg' };
   let filters = {
     q: '',
     family: 'all',
@@ -48,7 +49,11 @@
   };
 
   // Helpers
-  const fmt = (unit, v) => unit === 'percent' ? `${v.toFixed(1)}%` : `${Number.isInteger(v) ? v : v.toFixed(2)}`;
+  const fmt = (unit, v) => {
+    if (unit === 'percent') return `${Number(v).toFixed(1)}%`;
+    if (Number.isInteger(v)) return String(v);
+    return trimTrailingZeros(Number(v).toFixed(2));
+  };
   const idToLabel = id => datasets.find(d => d.id === id)?.title || id;
   const detectFamily = (name) => {
     for (const f of families) {
@@ -197,10 +202,17 @@
     const barH = 30;
     const gap = 8;
     const leftPad = 220; // label column
-    const rightPad = 24;
     const height = rows.length * (barH + gap) + 20;
     const values = rows.map(r => r.value);
     const maxVal = filters.normalize ? Math.max(...values) : (unit === 'percent' ? 100 : Math.max(...values));
+    // Dynamic right padding based on widest tick label so labels are never clipped
+    const ticks = 5;
+    const tickLabels = Array.from({ length: ticks + 1 }, (_, i) => {
+      const t = i / ticks;
+      return filters.normalize ? Math.round(t * 100) + '%' : fmt(unit, t * maxVal);
+    });
+    const widest = tickLabels.reduce((m, s) => Math.max(m, approximateTextWidth(s, 10)), 0);
+    const rightPad = Math.max(24, 10 + widest);
     const x = (v) => {
       const usable = width - leftPad - rightPad;
       const pct = maxVal ? (v / maxVal) : 0;
@@ -210,11 +222,10 @@
     const svg = el('svg', { width, height, viewBox: `0 0 ${width} ${height}`, xmlns: 'http://www.w3.org/2000/svg' });
     // Background grid
     const gridG = el('g', { class: 'grid' });
-    const ticks = 5;
     for (let i=0;i<=ticks;i++) {
       const t = i / ticks;
       const gx = leftPad + t * (width - leftPad - rightPad);
-      const label = filters.normalize ? Math.round(t * 100) + '%' : fmt(unit, t * maxVal);
+      const label = tickLabels[i];
       gridG.appendChild(el('line', { x1: gx, y1: 0, x2: gx, y2: height, class: 'grid-line'}));
       gridG.appendChild(el('text', { x: gx, y: 14, class: 'grid-label', 'text-anchor':'middle' }, label));
     }
@@ -240,13 +251,28 @@
         gLabel.appendChild(img);
       }
       const textX = icon ? 22 : 2;
-      const t = el('text', { x: textX, y: 8, class: 'bar-label', 'dominant-baseline': 'middle' }, r.name);
+      // Truncate label to fit into left label column
+      const availablePx = Math.max(40, leftPad - 28 - textX);
+      const truncated = truncateToWidth(r.name, availablePx, 12);
+      const t = el('text', { x: textX, y: 8, class: 'bar-label', 'dominant-baseline': 'middle' }, truncated);
+      const title = el('title', {}, r.name);
+      t.appendChild(title);
       gLabel.appendChild(t);
       barsG.appendChild(gLabel);
 
-      // Value text on bar
-      const valText = el('text', { x: leftPad + bw + 6, y: y + barH/2 + 5, class: 'bar-value' }, fmt(unit, r.value));
-      barsG.appendChild(valText);
+      // Value text on bar: place inside bar when possible, otherwise just outside (and clamp)
+      const valueStr = fmt(unit, r.value);
+      const approxW = approximateTextWidth(valueStr, 12);
+      const canFitInside = bw >= approxW + 12;
+      if (canFitInside) {
+        const xPos = leftPad + bw - 6;
+        const valText = el('text', { x: xPos, y: y + barH/2 + 5, class: 'bar-value in', 'text-anchor': 'end' }, valueStr);
+        barsG.appendChild(valText);
+      } else {
+        const xPos = Math.min(leftPad + bw + 6, width - rightPad - approxW - 2);
+        const valText = el('text', { x: xPos, y: y + barH/2 + 5, class: 'bar-value', 'text-anchor': 'start' }, valueStr);
+        barsG.appendChild(valText);
+      }
 
       // No votes chip
     });
@@ -313,7 +339,13 @@
     buildFamilyFilter(dataset.entries);
     buildLegend(dataset.entries);
     const rows = filteredSortedEntries(dataset);
-    datasetMeta.textContent = `${idToLabel(activeId)} • ${dataset.unit}`;
+    // Show dataset title, unit, and optional source link
+    const safeTitle = escapeHtml(idToLabel(activeId));
+    const safeUnit = escapeHtml(dataset.unit || 'score');
+    const src = dataset.source && typeof dataset.source === 'string' && dataset.source.trim() ? dataset.source.trim() : '';
+    datasetMeta.innerHTML = src
+      ? `${safeTitle} • ${safeUnit} • <a href="${src}" target="_blank" rel="noopener">Source</a>`
+      : `${safeTitle} • ${safeUnit}`;
     selectionMeta.textContent = `${rows.length} models shown`;
     renderChart(dataset, rows);
     renderTable(dataset, rows);
@@ -346,6 +378,23 @@
     const css = getComputedStyle(document.documentElement);
     clone.setAttribute('style', `background:${css.getPropertyValue('--surface')}`);
     return `<?xml version="1.0" encoding="UTF-8"?>\n` + new XMLSerializer().serializeToString(clone);
+  }
+  function truncateToWidth(text, maxPx, fontSize = 12, avgWidthRatio = 0.58) {
+    const approxCharPx = fontSize * avgWidthRatio;
+    const maxChars = Math.max(6, Math.floor(maxPx / approxCharPx));
+    if (text.length <= maxChars) return text;
+    return text.slice(0, Math.max(3, maxChars - 1)).trimEnd() + '…';
+  }
+  function approximateTextWidth(text, fontSize = 12, avgWidthRatio = 0.6) {
+    // Approximate average glyph width in px for UI sans fonts
+    return Math.ceil(text.length * fontSize * avgWidthRatio);
+  }
+  function trimTrailingZeros(numStr) {
+    let s = String(numStr);
+    if (s.indexOf('.') === -1) return s;
+    s = s.replace(/0+$/, '');
+    if (s.endsWith('.')) s = s.slice(0, -1);
+    return s;
   }
   function slug(s){ return s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,''); }
   function escapeHtml(s){ return s.replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
