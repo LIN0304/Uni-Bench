@@ -39,6 +39,7 @@
   // State
   let activeId = datasets[0]?.id;
   let activeExternal = null; // id of active external tab or null
+  const linkPages = (window.LINK_PAGES || []).filter(p => !datasets.find(d => d.id === p.id));
   const EXTERNAL_TABS = [
     {
       id: 'aiiq',
@@ -54,7 +55,14 @@
       url: '/assets/benchmark-links.html',
       icon: '/assets/favicon.svg',
       source: ''
-    }
+    },
+    ...linkPages.map(p => ({
+      id: p.id,
+      label: p.label,
+      url: `/assets/links/${p.id}.html`,
+      icon: '/assets/favicon.svg',
+      source: ''
+    }))
   ];
   let filters = {
     q: '',
