@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benchmark Links</title>
+    <style>
+      :root{--bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;color-scheme:dark only;}
+      [data-theme="light"]{--bg:#f7f9fc;--surface:#ffffff;--text:#0b0e12;--muted:#475569;color-scheme:light only;}
+      body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+      main{max-width:900px;margin:24px auto;padding:0 16px}
+      table{width:100%;border-collapse:collapse;background:var(--surface);border:1px solid var(--muted);border-radius:12px;overflow:hidden}
+      th,td{padding:8px 12px;border-bottom:1px solid var(--muted);text-align:left}
+      th{font-weight:600;background:var(--surface)}
+      tr:last-child td{border-bottom:none}
+      a{color:var(--text)}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 style="margin:0 0 12px 0">Benchmark Links</h1>
+      <table>
+        <thead>
+          <tr><th>Benchmark</th><th>URL</th><th>Category</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>BenchCouncil AI Bench</td><td><a href="links/benchcouncil-ai-bench.html">https://www.benchcouncil.org/aibench/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>AI Benchmark</td><td><a href="links/ai-benchmark.html">https://ai-benchmark.com/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>Geekbench AI</td><td><a href="links/geekbench-ai.html">https://www.geekbench.com/ai/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>LiveBench</td><td><a href="links/livebench.html">https://livebench.ai/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>SimpleBench</td><td><a href="links/simplebench.html">https://simple-bench.com/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>CS‑Bench</td><td><a href="links/cs-bench.html">https://csbench.github.io/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>EQ‑Bench</td><td><a href="links/eq-bench.html">https://eqbench.com/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>SWE‑bench</td><td><a href="links/swe-bench.html">https://swebench.com/</a></td><td>Code Benchmark</td></tr>
+          <tr><td>DeepResearch Bench</td><td><a href="links/deepresearch-bench.html">https://deepresearch-bench.github.io/</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>GLUE Benchmark</td><td><a href="links/glue-benchmark.html">https://gluebenchmark.com/</a></td><td>NLP Dataset</td></tr>
+          <tr><td>SuperGLUE</td><td><a href="links/superglue.html">https://super.gluebenchmark.com/</a></td><td>NLP Dataset</td></tr>
+          <tr><td>SQuAD</td><td><a href="links/squad.html">https://rajpurkar.github.io/SQuAD-explorer/</a></td><td>NLP Dataset</td></tr>
+          <tr><td>HellaSwag</td><td><a href="links/hellaswag.html">https://rowanzellers.com/hellaswag/</a></td><td>NLP Dataset</td></tr>
+          <tr><td>MMLU</td><td><a href="links/mmlu.html">https://huggingface.co/datasets/cais/mmlu</a></td><td>NLP Dataset</td></tr>
+          <tr><td>BIG‑bench</td><td><a href="links/big-bench.html">https://huggingface.co/datasets/google/bigbench</a></td><td>NLP Dataset</td></tr>
+          <tr><td>ARC (AI2 Reasoning Challenge)</td><td><a href="links/ai2-arc.html">https://huggingface.co/datasets/ai2_arc</a></td><td>NLP Dataset</td></tr>
+          <tr><td>TruthfulQA</td><td><a href="links/truthfulqa.html">https://huggingface.co/datasets/TruthfulQA</a></td><td>NLP Dataset</td></tr>
+          <tr><td>DROP</td><td><a href="links/drop.html">https://huggingface.co/datasets/drop</a></td><td>NLP Dataset</td></tr>
+          <tr><td>GSM8K</td><td><a href="links/gsm8k.html">https://huggingface.co/datasets/openai/gsm8k</a></td><td>NLP Dataset</td></tr>
+          <tr><td>BigBench Hard (BBH)</td><td><a href="links/bigbench-hard-bbh.html">https://huggingface.co/datasets/bigbench/bbh</a></td><td>NLP Dataset</td></tr>
+          <tr><td>MT‑Bench‑101</td><td><a href="links/mt-bench-101.html">https://arxiv.org/abs/2402.08321</a></td><td>NLP Dataset</td></tr>
+          <tr><td>AGIEval</td><td><a href="links/agieval.html">https://huggingface.co/datasets/agieval</a></td><td>NLP Dataset</td></tr>
+          <tr><td>Evidently AI LLM Benchmarks</td><td><a href="links/evidently-ai-llm-benchmarks.html">https://evidentlyai.com/llm-evaluation-benchmarks</a></td><td>Benchmark Suite</td></tr>
+          <tr><td>HumanEval</td><td><a href="links/humaneval.html">https://github.com/openai/human-eval</a></td><td>Code Benchmark</td></tr>
+        </tbody>
+      </table>
+    </main>
+    <script>
+      (function syncTheme(){
+        const saved = localStorage.getItem('theme');
+        if (saved) document.documentElement.dataset.theme = saved;
+      })();
+    </script>
+  </body>
+</html>
