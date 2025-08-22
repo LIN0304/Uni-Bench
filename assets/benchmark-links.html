@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benchmark Links</title>
+    <link rel="icon" href="favicon.svg" />
+    <style>
+      :root{--bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;--primary:#6aa5ff;color-scheme:dark only;}
+      [data-theme="light"]{--bg:#f7f9fc;--surface:#ffffff;--text:#0b0e12;--muted:#475569;--primary:#155eef;color-scheme:light only;}
+      body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+      main{max-width:900px;margin:24px auto;padding:0 16px}
+      section{margin-bottom:24px}
+      h2{margin:16px 0 8px 0;font-size:16px}
+      .links{display:flex;flex-wrap:wrap;gap:8px}
+      .chip{padding:8px 10px;border-radius:999px;border:1px solid var(--muted);background:var(--surface);color:var(--text);text-decoration:none}
+      .chip:hover{border-color:var(--primary);color:var(--primary)}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 style="margin:0 0 12px 0">Benchmark Links</h1>
+      <section>
+        <h2>Leaderboards</h2>
+        <div class="links">
+          <a class="chip" href="links/design-arena-web.html">Design Arena (Web)</a>
+          <a class="chip" href="links/artificial-analysis-rankings.html">Artificial Analysis Rankings</a>
+          <a class="chip" href="links/simplebench-rankings.html">SimpleBench Rankings</a>
+          <a class="chip" href="links/eq-bench-rankings.html">EQ-Bench Rankings</a>
+        </div>
+      </section>
+      <section>
+        <h2>Benchmark Suites</h2>
+        <div class="links">
+          <a class="chip" href="links/benchcouncil-ai-bench.html">BenchCouncil AI Bench</a>
+          <a class="chip" href="links/ai-benchmark.html">AI Benchmark</a>
+          <a class="chip" href="links/geekbench-ai.html">Geekbench AI</a>
+          <a class="chip" href="links/livebench.html">LiveBench</a>
+          <a class="chip" href="links/simplebench.html">SimpleBench</a>
+          <a class="chip" href="links/cs-bench.html">CS‑Bench</a>
+          <a class="chip" href="links/eq-bench.html">EQ‑Bench</a>
+          <a class="chip" href="links/deepresearch-bench.html">DeepResearch Bench</a>
+          <a class="chip" href="links/evidently-ai-llm-benchmarks.html">Evidently AI LLM Benchmarks</a>
+        </div>
+      </section>
+      <section>
+        <h2>Code Benchmarks</h2>
+        <div class="links">
+          <a class="chip" href="links/swe-bench.html">SWE‑bench</a>
+          <a class="chip" href="links/humaneval.html">HumanEval</a>
+        </div>
+      </section>
+      <section>
+        <h2>NLP Datasets</h2>
+        <div class="links">
+          <a class="chip" href="links/glue-benchmark.html">GLUE Benchmark</a>
+          <a class="chip" href="links/superglue.html">SuperGLUE</a>
+          <a class="chip" href="links/squad.html">SQuAD</a>
+          <a class="chip" href="links/hellaswag.html">HellaSwag</a>
+          <a class="chip" href="links/mmlu.html">MMLU</a>
+          <a class="chip" href="links/big-bench.html">BIG‑bench</a>
+          <a class="chip" href="links/ai2-arc.html">ARC (AI2 Reasoning Challenge)</a>
+          <a class="chip" href="links/truthfulqa.html">TruthfulQA</a>
+          <a class="chip" href="links/drop.html">DROP</a>
+          <a class="chip" href="links/gsm8k.html">GSM8K</a>
+          <a class="chip" href="links/bigbench-hard-bbh.html">BigBench Hard (BBH)</a>
+          <a class="chip" href="links/mt-bench-101.html">MT‑Bench‑101</a>
+          <a class="chip" href="links/agieval.html">AGIEval</a>
+          <a class="chip" href="links/confabulations-benchmark.html">Confabulations Benchmark</a>
+          <a class="chip" href="links/creative-writing-benchmark.html">Creative Writing Benchmark</a>
+        </div>
+      </section>
+    </main>
+    <script>
+      (function syncTheme(){
+        const saved = localStorage.getItem('theme');
+        if (saved) document.documentElement.dataset.theme = saved;
+      })();
+    </script>
+  </body>
+</html>
