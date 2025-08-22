@@ -38,15 +38,33 @@
 
   // State
   let activeId = datasets[0]?.id;
-  let activeExternal = false;
-  const EXTERNAL_TAB = {
-    id: 'external',
-    label: 'AI IQ Chart',
-    // Use root-relative paths to avoid Vercel "not_found" errors
-    url: '/assets/ai_iq_chart.html',
-    icon: '/assets/favicon.svg',
-    source: 'https://www.trackingai.org/home'
-  };
+  let activeExternal = null; // id of active external tab or null
+  const linkPages = (window.LINK_PAGES || []).filter(p => !datasets.find(d => d.id === p.id));
+  const EXTERNAL_TABS = [
+    {
+      id: 'aiiq',
+      label: 'AI IQ Chart',
+      // Use root-relative paths to avoid Vercel "not_found" errors
+      url: '/assets/ai_iq_chart.html',
+      icon: '/assets/favicon.svg',
+      source: 'https://www.trackingai.org/home'
+    },
+    {
+      id: 'links',
+      label: 'Benchmark Links',
+      url: '/assets/benchmark-links.html',
+      icon: '/assets/favicon.svg',
+      source: ''
+    },
+    ...linkPages.map(p => ({
+      id: p.id,
+      label: p.label,
+      url: `/assets/links/${p.id}.html`,
+      icon: '/assets/favicon.svg',
+      source: ''
+    }))
+  ];
+  const NAV_EXTERNAL_IDS = new Set(['aiiq', 'links']);
   let filters = {
     q: '',
     family: 'all',
@@ -71,19 +89,29 @@
   const decodeHash = () => {
     const h = new URLSearchParams(location.hash.slice(1));
     const target = h.get('id');
-    activeExternal = target === EXTERNAL_TAB.id;
-    if (!activeExternal && target && datasets.find(d => d.id === target)) activeId = target;
-    // Allow overriding external URL via hash
+    if (target && datasets.find(d => d.id === target)) {
+      activeExternal = null;
+      activeId = target;
+    } else if (target && EXTERNAL_TABS.find(t => t.id === target)) {
+      activeExternal = target;
+    }
+    // Allow overriding external URL via hash for active external tab
     const extUrl = h.get('url');
-    if (extUrl) EXTERNAL_TAB.url = extUrl;
+    if (extUrl && activeExternal) {
+      const tab = EXTERNAL_TABS.find(t => t.id === activeExternal);
+      if (tab) tab.url = extUrl;
+    }
     if (h.get('q')) filters.q = h.get('q');
     if (h.get('family')) filters.family = h.get('family');
     if (h.get('sort')) filters.sort = h.get('sort');
     if (h.get('norm')) filters.normalize = h.get('norm') === '1';
   };
   const encodeHash = () => {
-    const params = { id: activeExternal ? EXTERNAL_TAB.id : activeId, q: filters.q, family: filters.family, sort: filters.sort, norm: filters.normalize ? '1' : '0' };
-    if (activeExternal && EXTERNAL_TAB.url) params.url = EXTERNAL_TAB.url;
+    const params = { id: activeExternal || activeId, q: filters.q, family: filters.family, sort: filters.sort, norm: filters.normalize ? '1' : '0' };
+    if (activeExternal) {
+      const tab = EXTERNAL_TABS.find(t => t.id === activeExternal);
+      if (tab && tab.url) params.url = tab.url;
+    }
     const h = new URLSearchParams(params);
     location.hash = h.toString();
     deepLink.textContent = `#${h.toString()}`;
@@ -99,25 +127,27 @@
       btn.setAttribute('aria-selected', (!activeExternal && d.id === activeId) ? 'true' : 'false');
       btn.textContent = d.title;
       btn.addEventListener('click', () => {
-        activeExternal = false;
+        activeExternal = null;
         activeId = d.id;
         buildTabs();
         render();
       });
       tabsEl.appendChild(btn);
     });
-    // External tab
-    const extBtn = document.createElement('button');
-    extBtn.className = `tab ${activeExternal ? 'active' : ''}`;
-    extBtn.setAttribute('role', 'tab');
-    extBtn.setAttribute('aria-selected', activeExternal ? 'true' : 'false');
-    extBtn.innerHTML = `<img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}`;
-    extBtn.addEventListener('click', () => {
-      activeExternal = true;
-      buildTabs();
-      render();
+    // External tabs (limited to main shortcuts)
+    EXTERNAL_TABS.filter(t => NAV_EXTERNAL_IDS.has(t.id)).forEach(tab => {
+      const extBtn = document.createElement('button');
+      extBtn.className = `tab ${activeExternal === tab.id ? 'active' : ''}`;
+      extBtn.setAttribute('role', 'tab');
+      extBtn.setAttribute('aria-selected', activeExternal === tab.id ? 'true' : 'false');
+      extBtn.innerHTML = `<img class="icon-16" src="${tab.icon}" alt="icon"/> ${tab.label}`;
+      extBtn.addEventListener('click', () => {
+        activeExternal = tab.id;
+        buildTabs();
+        render();
+      });
+      tabsEl.appendChild(extBtn);
     });
-    tabsEl.appendChild(extBtn);
   }
 
   function buildFamilyFilter(data) {
@@ -323,16 +353,17 @@
   function render() {
     // Toggle external vs internal views
     if (activeExternal) {
+      const tab = EXTERNAL_TABS.find(t => t.id === activeExternal);
       controlsEl.hidden = true;
       chartEl.hidden = true;
       tableEl.hidden = true;
       legendEl.hidden = true;
       externalWrap.hidden = false;
-      if (externalFrame.src !== EXTERNAL_TAB.url) externalFrame.src = EXTERNAL_TAB.url;
-      const src = EXTERNAL_TAB.source && typeof EXTERNAL_TAB.source === 'string' && EXTERNAL_TAB.source.trim() ? EXTERNAL_TAB.source.trim() : '';
+      if (tab && externalFrame.src !== tab.url) externalFrame.src = tab.url;
+      const src = tab && tab.source && typeof tab.source === 'string' && tab.source.trim() ? tab.source.trim() : '';
       datasetMeta.innerHTML = src
-        ? `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span> • <a href="${src}" target="_blank" rel="noopener">Source</a>`
-        : `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span>`;
+        ? `<span class="model-name"><img class="icon-16" src="${tab.icon}" alt="icon"/> ${tab.label}</span> • <a href="${src}" target="_blank" rel="noopener">Source</a>`
+        : `<span class="model-name"><img class="icon-16" src="${tab ? tab.icon : ''}" alt="icon"/> ${tab ? tab.label : ''}</span>`;
       selectionMeta.textContent = `Embedded page`;
       encodeHash();
       return;

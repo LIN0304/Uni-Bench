@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Benchmark Links</title>
+    <link rel="icon" href="favicon.svg" />
+    <style>
+      :root{--bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;color-scheme:dark only;}
+      [data-theme="light"]{--bg:#f7f9fc;--surface:#ffffff;--text:#0b0e12;--muted:#475569;color-scheme:light only;}
+      body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
+      main{max-width:900px;margin:24px auto;padding:0 16px}
+      .grid{display:flex;flex-wrap:wrap;gap:12px;margin-top:16px}
+      .item{display:flex;flex-direction:column;gap:2px;padding:10px 12px;border-radius:12px;border:1px solid var(--muted);background:var(--surface);color:var(--text);text-decoration:none;min-width:160px}
+      .item:hover{border-color:var(--text)}
+      .label{font-weight:600}
+      .cat{font-size:12px;color:var(--muted)}
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1 style="margin:0">Benchmark Links</h1>
+      <div class="grid">
+        <a class="item" href="links/benchcouncil-ai-bench.html"><span class="label">BenchCouncil AI Bench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/ai-benchmark.html"><span class="label">AI Benchmark</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/geekbench-ai.html"><span class="label">Geekbench AI</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/livebench.html"><span class="label">LiveBench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/simplebench.html"><span class="label">SimpleBench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/cs-bench.html"><span class="label">CS‑Bench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/eq-bench.html"><span class="label">EQ‑Bench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/swe-bench.html"><span class="label">SWE‑bench</span><span class="cat">Code Benchmark</span></a>
+        <a class="item" href="links/deepresearch-bench.html"><span class="label">DeepResearch Bench</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/glue-benchmark.html"><span class="label">GLUE Benchmark</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/superglue.html"><span class="label">SuperGLUE</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/squad.html"><span class="label">SQuAD</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/hellaswag.html"><span class="label">HellaSwag</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/mmlu.html"><span class="label">MMLU</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/big-bench.html"><span class="label">BIG‑bench</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/ai2-arc.html"><span class="label">ARC (AI2 Reasoning Challenge)</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/truthfulqa.html"><span class="label">TruthfulQA</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/drop.html"><span class="label">DROP</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/gsm8k.html"><span class="label">GSM8K</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/bigbench-hard-bbh.html"><span class="label">BigBench Hard (BBH)</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/mt-bench-101.html"><span class="label">MT‑Bench‑101</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/agieval.html"><span class="label">AGIEval</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/evidently-ai-llm-benchmarks.html"><span class="label">Evidently AI LLM Benchmarks</span><span class="cat">Benchmark Suite</span></a>
+        <a class="item" href="links/humaneval.html"><span class="label">HumanEval</span><span class="cat">Code Benchmark</span></a>
+        <a class="item" href="links/design-arena-web.html"><span class="label">Design Arena (Web)</span><span class="cat">Leaderboard</span></a>
+        <a class="item" href="links/artificial-analysis-rankings.html"><span class="label">Artificial Analysis Rankings</span><span class="cat">Leaderboard</span></a>
+        <a class="item" href="links/creative-writing-benchmark.html"><span class="label">Creative Writing Benchmark</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/simplebench-rankings.html"><span class="label">SimpleBench Rankings</span><span class="cat">Leaderboard</span></a>
+        <a class="item" href="links/confabulations-benchmark.html"><span class="label">Confabulations Benchmark</span><span class="cat">NLP Dataset</span></a>
+        <a class="item" href="links/eq-bench-rankings.html"><span class="label">EQ-Bench Rankings</span><span class="cat">Leaderboard</span></a>
+      </div>
+    </main>
+    <script>
+      (function syncTheme(){
+        const saved = localStorage.getItem('theme');
+        if (saved) document.documentElement.dataset.theme = saved;
+      })();
+    </script>
+  </body>
+</html>
