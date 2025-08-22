@@ -5,11 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>SimpleBench</title>
     <style>
-      :root{--bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;color-scheme:dark only;}
-      [data-theme="light"]{--bg:#f7f9fc;--surface:#ffffff;--text:#0b0e12;--muted:#475569;color-scheme:light only;}
+      :root{--bg:#0b0e12;--surface:#10151b;--text:#e7edf3;--muted:#9fb0c0;--primary:#6aa5ff;color-scheme:dark only;}
+      [data-theme="light"]{--bg:#f7f9fc;--surface:#ffffff;--text:#0b0e12;--muted:#475569;--primary:#155eef;color-scheme:light only;}
       body{margin:0;background:var(--bg);color:var(--text);font:14px/1.4 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,"Helvetica Neue",Arial}
       main{max-width:900px;margin:24px auto;padding:0 16px}
       a{color:var(--text)}
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:16px 0;}
+  .tab{padding:8px 10px;border-radius:999px;border:1px solid var(--muted);background:var(--surface);color:var(--text);text-decoration:none;}
+  .tab.active{background:var(--primary);border-color:var(--primary);color:white;}
     </style>
   </head>
   <body>
@@ -18,6 +21,7 @@
       <p>Category: Benchmark Suite</p>
       <p><a href="https://simple-bench.com/" target="_blank" rel="noopener">https://simple-bench.com/</a></p>
     </main>
+    <script src="nav.js"></script>
     <script>
       (function syncTheme(){
         const saved = localStorage.getItem('theme');
