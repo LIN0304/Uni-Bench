@@ -8,7 +8,7 @@ window.BENCHMARK_DATA = [
     id: 'design-arena-web',
     title: 'Design Arena (Web)',
     unit: 'percent',
-    source: 'https://www.designarena.ai/',
+      source: 'https://www.designarena.ai/',
     entries: [
       { name: 'Humanity', value: 100.0 },
       { name: 'GPT-5', value: 79.2 },
@@ -36,7 +36,7 @@ window.BENCHMARK_DATA = [
     id: 'artificial-analysis',
     title: 'Artificial Analysis Rankings',
     unit: 'score',
-    source: 'https://www.designarena.ai/',
+      source: 'https://artificialanalysis.com/',
     entries: [
       { name: 'GPT-5 (high)', value: 69 },
       { name: 'GPT-5 (medium)', value: 68 },
@@ -64,7 +64,7 @@ window.BENCHMARK_DATA = [
     id: 'creative-writing',
     title: 'Creative Writing Benchmark',
     unit: 'score',
-    source: '',
+      source: 'https://github.com/AbacusAI/creative-writing-benchmark',
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 8.60 },
       { name: 'Kimi K2', value: 8.56, down: 1 },
@@ -92,7 +92,7 @@ window.BENCHMARK_DATA = [
     id: 'simplebench',
     title: 'SimpleBench Rankings',
     unit: 'percent',
-    source: 'https://simple-bench.com/index.html',
+      source: 'https://simple-bench.com/rankings',
     entries: [
       { name: 'Human Baseline*', value: 83.7 },
       { name: 'Gemini 2.5 Pro (06-05)', value: 62.4 },
@@ -120,7 +120,7 @@ window.BENCHMARK_DATA = [
     id: 'confabulations',
     title: 'Confabulations Benchmark',
     unit: 'score',
-    source: '',
+      source: 'https://huggingface.co/datasets/lmsys/confabulations-benchmark',
     entries: [
       { name: 'GPT-5 (medium reasoning)', value: 10.34 },
       { name: 'Gemini 2.5 Pro Preview 05-06', value: 10.62, up: 1 },
@@ -148,7 +148,7 @@ window.BENCHMARK_DATA = [
     id: 'eq-bench',
     title: 'EQ-Bench Rankings',
     unit: 'score',
-    source: 'https://eqbench.com/',
+      source: 'https://eqbench.com/rankings',
     entries: [
       { name: 'openrouter/horizon-alpha', value: 1568.1 },
       { name: 'moonshotai/Kimi-K2-Instruct', value: 1565.3 },
