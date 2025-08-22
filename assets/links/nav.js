@@ -1,5 +1,15 @@
-(function() {
+;(function() {
+  function addIcon(){
+    if (!document.querySelector('link[rel="icon"]')) {
+      const link = document.createElement('link');
+      link.rel = 'icon';
+      link.href = '../favicon.svg';
+      document.head.appendChild(link);
+    }
+  }
+
   function init(){
+    addIcon();
     const LINKS = window.LINK_PAGES || [];
     const current = location.pathname.split('/').pop().replace('.html', '');
     const nav = document.createElement('nav');
@@ -14,6 +24,7 @@
     const main = document.querySelector('main');
     if (main) main.parentNode.insertBefore(nav, main);
   }
+
   if (window.LINK_PAGES) {
     init();
   } else {
