@@ -64,6 +64,7 @@
       source: ''
     }))
   ];
+  const NAV_EXTERNAL_IDS = new Set(['aiiq', 'links']);
   let filters = {
     q: '',
     family: 'all',
@@ -133,8 +134,8 @@
       });
       tabsEl.appendChild(btn);
     });
-    // External tabs
-    EXTERNAL_TABS.forEach(tab => {
+    // External tabs (limited to main shortcuts)
+    EXTERNAL_TABS.filter(t => NAV_EXTERNAL_IDS.has(t.id)).forEach(tab => {
       const extBtn = document.createElement('button');
       extBtn.className = `tab ${activeExternal === tab.id ? 'active' : ''}`;
       extBtn.setAttribute('role', 'tab');
