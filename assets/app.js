@@ -310,18 +310,11 @@
     const rect = tipEl.getBoundingClientRect();
     tipEl.style.left = `${x + 12}px`;
     tipEl.style.top = `${window.scrollY + y - rect.height/2}px`;
-    tipEl.classList.add('show');
+    tipEl.style.opacity = '1';
   }
-  function hideTip() {
-    if (tipEl) {
-      tipEl.classList.remove('show');
-    }
-  }
+  function hideTip() { if (tipEl) tipEl.style.opacity = '0'; }
 
   function render() {
-    // Add loading state
-    chartEl.classList.add('loading');
-
     // Toggle external vs internal views
     if (activeExternal) {
       controlsEl.hidden = true;
@@ -336,15 +329,11 @@
         : `<span class="model-name"><img class="icon-16" src="${EXTERNAL_TAB.icon}" alt="icon"/> ${EXTERNAL_TAB.label}</span>`;
       selectionMeta.textContent = `Embedded page`;
       encodeHash();
-      chartEl.classList.remove('loading');
       return;
     }
 
     const dataset = datasets.find(d => d.id === activeId);
-    if (!dataset) {
-      chartEl.classList.remove('loading');
-      return;
-    }
+    if (!dataset) return;
     controlsEl.hidden = false;
     chartEl.hidden = false;
     tableEl.hidden = false;
@@ -364,11 +353,6 @@
     renderChart(dataset, rows);
     renderTable(dataset, rows);
     encodeHash();
-
-    // Remove loading state after render
-    requestAnimationFrame(() => {
-      chartEl.classList.remove('loading');
-    });
   }
 
   // Events
@@ -424,54 +408,11 @@
     });
   }
 
-  // Keyboard shortcuts
-  document.addEventListener('keydown', (e) => {
-    // Slash to focus search
-    if (e.key === '/' && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-      e.preventDefault();
-      searchEl.focus();
-    }
-    // Escape to clear search or blur
-    if (e.key === 'Escape') {
-      if (searchEl === document.activeElement) {
-        searchEl.value = '';
-        filters.q = '';
-        render();
-        searchEl.blur();
-      }
-    }
-    // Arrow keys to navigate tabs
-    if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && !['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
-      const tabs = Array.from(tabsEl.querySelectorAll('.tab'));
-      const currentIndex = tabs.findIndex(t => t.classList.contains('active'));
-      if (currentIndex !== -1) {
-        const nextIndex = e.key === 'ArrowLeft'
-          ? (currentIndex - 1 + tabs.length) % tabs.length
-          : (currentIndex + 1) % tabs.length;
-        tabs[nextIndex].click();
-        tabs[nextIndex].focus();
-      }
-    }
-  });
-
-  // Add smooth scroll behavior when clicking on table rows
-  tableEl.addEventListener('click', (e) => {
-    const tr = e.target.closest('tbody tr');
-    if (tr) {
-      tr.scrollIntoView({ behavior: 'smooth', block: 'center' });
-    }
-  });
-
   // Init
   (function init(){
     // Theme
     const saved = localStorage.getItem('theme');
     if (saved) document.documentElement.dataset.theme = saved;
-    else {
-      // Auto-detect dark mode preference
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      document.documentElement.dataset.theme = prefersDark ? 'dark' : 'light';
-    }
     // Deep link
     decodeHash();
     buildTabs();
@@ -480,10 +421,5 @@
     sortEl.value = filters.sort;
     normalizeEl.checked = filters.normalize;
     render();
-
-    // Add welcome animation
-    setTimeout(() => {
-      document.body.style.opacity = '1';
-    }, 50);
   })();
 })();
