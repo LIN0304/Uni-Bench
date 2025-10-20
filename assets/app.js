@@ -36,6 +36,10 @@
   const deepLink = document.getElementById('deepLink');
   const themeToggle = document.getElementById('themeToggle');
   const legendEl = document.getElementById('legend');
+  const statsCardsEl = document.getElementById('statsCards');
+  const topModelsEl = document.getElementById('topModels');
+  const distributionEl = document.getElementById('distribution');
+  const chartViewEl = document.getElementById('chartView');
 
   // State
   let activeId = datasets[0]?.id;
@@ -46,6 +50,7 @@
     family: 'all',
     sort: 'value-desc',
     normalize: false,
+    chartView: 'bars',
   };
 
   // Helpers
@@ -74,9 +79,10 @@
     if (h.get('family')) filters.family = h.get('family');
     if (h.get('sort')) filters.sort = h.get('sort');
     if (h.get('norm')) filters.normalize = h.get('norm') === '1';
+    if (h.get('view')) filters.chartView = h.get('view');
   };
   const encodeHash = () => {
-    const params = { id: activeExternal ? EXTERNAL_TAB.id : activeId, q: filters.q, family: filters.family, sort: filters.sort, norm: filters.normalize ? '1' : '0' };
+    const params = { id: activeExternal ? EXTERNAL_TAB.id : activeId, q: filters.q, family: filters.family, sort: filters.sort, norm: filters.normalize ? '1' : '0', view: filters.chartView };
     if (activeExternal && EXTERNAL_TAB.url) params.url = EXTERNAL_TAB.url;
     const h = new URLSearchParams(params);
     location.hash = h.toString();
@@ -182,14 +188,155 @@
     return rows;
   }
 
+  function renderStatsCards(rows, dataset) {
+    if (!rows.length) {
+      statsCardsEl.innerHTML = '';
+      return;
+    }
+
+    const values = rows.map(r => r.value);
+    const avg = values.reduce((a,b) => a+b, 0) / values.length;
+    const max = Math.max(...values);
+    const min = Math.min(...values);
+    const median = [...values].sort((a,b) => a-b)[Math.floor(values.length / 2)];
+
+    const cards = [
+      { label: 'Total Models', value: rows.length, subtitle: `Across ${new Set(rows.map(r => r.family)).size} families` },
+      { label: 'Average Score', value: fmt(dataset.unit, avg), subtitle: 'Mean performance' },
+      { label: 'Top Score', value: fmt(dataset.unit, max), subtitle: rows.find(r => r.value === max)?.name || '' },
+      { label: 'Median Score', value: fmt(dataset.unit, median), subtitle: '50th percentile' },
+    ];
+
+    statsCardsEl.innerHTML = cards.map(card => `
+      <div class="stat-card">
+        <div class="stat-card-label">${escapeHtml(card.label)}</div>
+        <div class="stat-card-value">${escapeHtml(String(card.value))}</div>
+        <div class="stat-card-subtitle">${escapeHtml(card.subtitle)}</div>
+      </div>
+    `).join('');
+  }
+
+  function renderTopModels(rows, dataset) {
+    const top3 = rows.slice(0, 3);
+    if (top3.length === 0) {
+      topModelsEl.innerHTML = '';
+      return;
+    }
+
+    const medals = ['🥇', '🥈', '🥉'];
+    const badgeClasses = ['gold', 'silver', 'bronze'];
+    const rankClasses = ['rank-1', 'rank-2', 'rank-3'];
+
+    topModelsEl.innerHTML = top3.map((row, idx) => {
+      const icon = iconForFamily(row.family);
+      const percentage = dataset.unit === 'percent' ? row.value : (row.value / 100) * 100;
+      const circumference = 2 * Math.PI * 45;
+      const offset = circumference - (percentage / 100) * circumference;
+
+      return `
+        <div class="top-model-card ${rankClasses[idx]}">
+          <div class="rank-badge ${badgeClasses[idx]}">${medals[idx]}</div>
+          <div class="top-model-header">
+            ${icon ? `<img class="icon-16" src="${icon}" alt="${row.family} icon"/>` : ''}
+            <div class="top-model-info">
+              <h3>${escapeHtml(row.name)}</h3>
+              <p>${escapeHtml(row.family)}</p>
+            </div>
+          </div>
+          <div class="radial-chart">
+            <svg width="120" height="120" viewBox="0 0 100 100">
+              <circle class="radial-bg" cx="50" cy="50" r="45"/>
+              <circle class="radial-progress" cx="50" cy="50" r="45"
+                      stroke="url(#gradient${idx})"
+                      stroke-dasharray="${circumference}"
+                      stroke-dashoffset="${offset}"/>
+              <defs>
+                <linearGradient id="gradient${idx}" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" style="stop-color:var(--primary);stop-opacity:1" />
+                  <stop offset="100%" style="stop-color:var(--accent);stop-opacity:1" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="radial-chart-label">
+              <div class="radial-chart-value">${fmt(dataset.unit, row.value)}</div>
+              <div class="radial-chart-unit">score</div>
+            </div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderDistribution(rows, dataset) {
+    if (rows.length === 0) {
+      distributionEl.innerHTML = '';
+      return;
+    }
+
+    const values = rows.map(r => r.value);
+    const min = Math.min(...values);
+    const max = Math.max(...values);
+    const bucketCount = 8;
+    const bucketSize = (max - min) / bucketCount;
+
+    const buckets = new Array(bucketCount).fill(0);
+    values.forEach(v => {
+      const bucketIdx = Math.min(Math.floor((v - min) / bucketSize), bucketCount - 1);
+      buckets[bucketIdx]++;
+    });
+
+    const maxCount = Math.max(...buckets);
+
+    distributionEl.innerHTML = `
+      <div class="distribution-title">
+        📊 Score Distribution
+      </div>
+      <div class="histogram">
+        ${buckets.map((count, idx) => {
+          const height = maxCount > 0 ? (count / maxCount) * 100 : 0;
+          const rangeStart = min + idx * bucketSize;
+          const rangeEnd = min + (idx + 1) * bucketSize;
+          return `
+            <div class="histogram-bar" style="height: ${height}%">
+              <div class="histogram-bar-value">${count}</div>
+              <div class="histogram-bar-label">${fmt(dataset.unit, rangeStart)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
+  function renderComparison(rows, dataset) {
+    chartEl.innerHTML = `
+      <div class="comparison-grid">
+        ${rows.map(row => {
+          const icon = iconForFamily(row.family);
+          return `
+            <div class="comparison-item">
+              ${icon ? `<img class="comparison-icon icon-16" src="${icon}" alt="${row.family} icon"/>` : '<div class="comparison-icon"></div>'}
+              <div class="comparison-name" title="${escapeHtml(row.name)}">${escapeHtml(row.name)}</div>
+              <div class="comparison-score">${fmt(dataset.unit, row.value)}</div>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    `;
+  }
+
   function renderTable(dataset, rows) {
     const unit = dataset.unit;
     const html = [`<table><thead><tr><th>#</th><th>Model</th><th>Family</th><th>Score</th></tr></thead><tbody>`];
     rows.forEach((r,i) => {
       const icon = iconForFamily(r.family);
+      let badge = '';
+      if (i === 0) badge = '<span class="ranking-badge top-1">🥇</span>';
+      else if (i === 1) badge = '<span class="ranking-badge top-2">🥈</span>';
+      else if (i === 2) badge = '<span class="ranking-badge top-3">🥉</span>';
+
       const nameCell = icon
-        ? `<span class="model-name"><img class="icon-16" src="${icon}" alt="${r.family} icon"/>${escapeHtml(r.name)}</span>`
-        : escapeHtml(r.name);
+        ? `<span class="model-name">${badge}<img class="icon-16" src="${icon}" alt="${r.family} icon"/>${escapeHtml(r.name)}</span>`
+        : `<span class="model-name">${badge}${escapeHtml(r.name)}</span>`;
       html.push(`<tr><td>${i+1}</td><td>${nameCell}</td><td>${r.family}</td><td>${fmt(unit,r.value)}</td></tr>`);
     });
     html.push('</tbody></table>');
@@ -328,6 +475,9 @@
       chartEl.hidden = true;
       tableEl.hidden = true;
       legendEl.hidden = true;
+      statsCardsEl.hidden = true;
+      topModelsEl.hidden = true;
+      distributionEl.hidden = true;
       externalWrap.hidden = false;
       if (externalFrame.src !== EXTERNAL_TAB.url) externalFrame.src = EXTERNAL_TAB.url;
       const extSrc = EXTERNAL_TAB.source && typeof EXTERNAL_TAB.source === 'string' && EXTERNAL_TAB.source.trim() ? EXTERNAL_TAB.source.trim() : '';
@@ -349,10 +499,19 @@
     chartEl.hidden = false;
     tableEl.hidden = false;
     legendEl.hidden = false;
+    statsCardsEl.hidden = false;
+    topModelsEl.hidden = false;
+    distributionEl.hidden = false;
     externalWrap.hidden = true;
     buildFamilyFilter(dataset.entries);
     buildLegend(dataset.entries);
     const rows = filteredSortedEntries(dataset);
+
+    // Render new visual elements
+    renderStatsCards(rows, dataset);
+    renderTopModels(rows, dataset);
+    renderDistribution(rows, dataset);
+
     // Show dataset title, unit, and optional source link
     const safeTitle = escapeHtml(idToLabel(activeId));
     const safeUnit = escapeHtml(dataset.unit || 'score');
@@ -361,7 +520,17 @@
       ? `${safeTitle} • ${safeUnit} • <a href="${src}" target="_blank" rel="noopener">Source</a>`
       : `${safeTitle} • ${safeUnit}`;
     selectionMeta.textContent = `${rows.length} models shown`;
-    renderChart(dataset, rows);
+
+    // Render chart based on selected view
+    if (filters.chartView === 'comparison') {
+      renderComparison(rows, dataset);
+    } else if (filters.chartView === 'radial') {
+      // For radial view, show top models in the chart area
+      chartEl.innerHTML = '<div class="top-models">' + topModelsEl.innerHTML + '</div>';
+    } else {
+      renderChart(dataset, rows);
+    }
+
     renderTable(dataset, rows);
     encodeHash();
 
@@ -376,6 +545,7 @@
   familyEl.addEventListener('change', (e) => { filters.family = e.target.value; render(); });
   sortEl.addEventListener('change', (e) => { filters.sort = e.target.value; render(); });
   normalizeEl.addEventListener('change', (e) => { filters.normalize = e.target.checked; render(); });
+  chartViewEl.addEventListener('change', (e) => { filters.chartView = e.target.value; render(); });
   themeToggle.addEventListener('click', () => {
     const next = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark';
     document.documentElement.dataset.theme = next;
@@ -479,6 +649,7 @@
     searchEl.value = filters.q;
     sortEl.value = filters.sort;
     normalizeEl.checked = filters.normalize;
+    chartViewEl.value = filters.chartView;
     render();
 
     // Add welcome animation

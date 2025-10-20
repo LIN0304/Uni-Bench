@@ -50,6 +50,14 @@
             </select>
           </div>
           <div class="control">
+            <label for="chartView">Chart Type</label>
+            <select id="chartView">
+              <option value="bars">Bar Chart</option>
+              <option value="radial">Radial Chart</option>
+              <option value="comparison">Comparison</option>
+            </select>
+          </div>
+          <div class="control">
             <label class="checkbox">
               <input id="normalize" type="checkbox" />
               <span>Normalize bars</span>
@@ -62,8 +70,20 @@
         </div>
       </section>
 
+      <section id="statsCards" class="stats-cards" aria-label="Statistics overview">
+        <!-- stats cards injected -->
+      </section>
+
+      <section id="topModels" class="top-models" aria-label="Top performers">
+        <!-- Top 3 models with radial charts -->
+      </section>
+
       <section id="chart" class="chart" aria-live="polite">
         <!-- SVG chart injected -->
+      </section>
+
+      <section id="distribution" class="distribution-chart" aria-label="Score distribution">
+        <!-- Distribution histogram -->
       </section>
 
       <section id="legend" class="legend" aria-label="Model family legend">
