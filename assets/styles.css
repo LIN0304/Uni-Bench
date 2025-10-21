@@ -34,6 +34,18 @@
   --primary: #155eef;
   --accent: #0891b2;
   --grid: #eef2f7;
+  /* Light theme bar colors - darker for better contrast */
+  --bar-openai: #10a37f;
+  --bar-anthropic: #d97706;
+  --bar-google: #1e40af;
+  --bar-deepseek: #be123c;
+  --bar-qwen: #7c3aed;
+  --bar-grok: #ca8a04;
+  --bar-glm: #1e40af;
+  --bar-mistral: #0891b2;
+  --bar-human: #15803d;
+  --bar-meta: #1e40af;
+  --bar-other: #64748b;
   color-scheme: light only;
 }
 
@@ -500,9 +512,17 @@ tbody tr.highlight {
   display: inline-block;
   vertical-align: middle;
   border-radius: 4px;
-  background: transparent;
+  background: rgba(255, 255, 255, 0.95);
   object-fit: contain;
   transition: transform 0.2s ease;
+  padding: 2px;
+  box-sizing: content-box;
+}
+
+/* Light theme: use subtle background */
+[data-theme="light"] .icon-16 {
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
 }
 .icon-16:hover {
   transform: scale(1.1);
